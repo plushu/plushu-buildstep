@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $PLUSHU_TRACE ]] && set -x
+
+app_dir="$PLUSHU_ROOT/apps/$1"
+cache_dir="$app_dir/cache"
+cidfile="$app_dir/build.cid"
+
+# Ensure the app/cache directory exists
+mkdir -p $cache_dir
+
+# Load the files into a buildstep container
+docker run -i --cidfile="$cidfile" \
+  progrium/buildstep /bin/bash -c "mkdir -p /app && tar -xC /app"
+
+# Convert the loaded container to an intermediate image
+# (since we can't run another command in the container)
+build_image=$(docker commit `cat "$cidfile"`)
+docker rm `cat "$cidfile"` > /dev/null && rm -f "$cidfile"
+
+# Build from that image in a new container
+docker run --cidfile="$cidfile" -v $cache_dir:/cache \
+  "$build_image" /build/builder
+docker rmi "$build_image" > /dev/null
+
+# Convert the built app container to an image
+build_image=$(docker commit `cat "$cidfile"`)
+docker rm `cat "$cidfile"` > /dev/null && rm -f "$cidfile"
+
+# Save the built image ID
+echo "$build_image" >"$app_dir/build.iid"

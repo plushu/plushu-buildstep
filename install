@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $PLUSHU_TRACE ]] && set -x
+
+if [[ -d "$PLUSHU_ROOT/plugins/docker" ]]; then
+  docker pull progrium/buildstep
+else
+  cat >&2 <<EOF
+This plugin requires the plushu-docker plugin.
+You can install it with:
+
+# plushu plugins:install docker
+
+Once plushu-docker is installed, reinstall this plugin with:
+
+\$ plushu plugins:reinstall $PLUSHU_PLUGIN_NAME
+EOF
+fi
