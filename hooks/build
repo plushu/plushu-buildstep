@@ -14,8 +14,8 @@ docker run -i --cidfile="$cidfile" \
 
 # Convert the loaded container to an intermediate image
 # (since we can't run another command in the container)
-build_image=$(docker commit `cat "$cidfile"`)
-docker rm `cat "$cidfile"` > /dev/null && rm -f "$cidfile"
+build_image=$(docker commit $(<"$cidfile"))
+docker rm $(<"$cidfile") > /dev/null && rm -f "$cidfile"
 
 # Build from that image in a new container
 docker run --cidfile="$cidfile" -v $cache_dir:/cache \
@@ -23,8 +23,8 @@ docker run --cidfile="$cidfile" -v $cache_dir:/cache \
 docker rmi "$build_image" > /dev/null
 
 # Convert the built app container to an image
-build_image=$(docker commit `cat "$cidfile"`)
-docker rm `cat "$cidfile"` > /dev/null && rm -f "$cidfile"
+build_image=$(docker commit $(<"$cidfile"))
+docker rm $(<"$cidfile") > /dev/null && rm -f "$cidfile"
 
 # Save the built image ID
 echo "$build_image" >"$app_dir/build.iid"
