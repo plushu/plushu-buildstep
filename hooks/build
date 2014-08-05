@@ -9,22 +9,12 @@ cidfile="$app_dir/build.cid"
 mkdir -p $cache_dir
 
 # Load the files into a buildstep container
-docker run -i --cidfile="$cidfile" \
-  progrium/buildstep /bin/bash -c "mkdir -p /app && tar -xC /app"
-
-# Convert the loaded container to an intermediate image
-# (since we can't run another command in the container)
-inter_image=$(docker commit $(<"$cidfile"))
-docker rm $(<"$cidfile") > /dev/null && rm -f "$cidfile"
-
-# Build from that image in a new container
-docker run --cidfile="$cidfile" -v $cache_dir:/cache \
-  "$inter_image" /build/builder
+docker run -i -v $cache_dir:/cache --cidfile="$cidfile" progrium/buildstep \
+  /bin/bash -c "mkdir -p /app && tar -xC /app && /build/builder"
 
 # Convert the built app container to an image
 build_image=$(docker commit $(<"$cidfile"))
 docker rm $(<"$cidfile") > /dev/null && rm -f "$cidfile"
-docker rmi "$inter_image" > /dev/null
 
 # Save the built image ID
 echo "$build_image" >"$app_dir/build.iid"
