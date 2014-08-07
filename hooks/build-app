@@ -17,4 +17,4 @@ build_image=$(docker commit $(<"$cidfile"))
 docker rm $(<"$cidfile") > /dev/null && rm -f "$cidfile"
 
 # Save the built image ID
-echo "$build_image" >"$app_dir/build.iid"
+printf '%s\n' "$build_image" >"$app_dir/build.iid"
