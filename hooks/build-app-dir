@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $PLUSHU_TRACE ]] && set -x
+
+app_dir="$PLUSHU_ROOT/apps/$1"
+cache_dir="$app_dir/cache"
+cidfile="$app_dir/build.cid"
+
+# Ensure the app/cache directory exists
+mkdir -p "$cache_dir"
+
+# Load the files into a buildstep container
+docker run -i -v "$cache_dir:/cache" -v "$2:/src" --cidfile="$cidfile" \
+  progrium/buildstep /bin/bash -c "cp /src /app && /build/builder"
+
+# Convert the built app container to an image
+build_image=$(docker commit $(<"$cidfile"))
+docker rm $(<"$cidfile") > /dev/null && rm -f "$cidfile"
+
+# Save the built image ID
+printf '%s\n' "$build_image" >"$app_dir/build.iid"
