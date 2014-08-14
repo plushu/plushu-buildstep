@@ -6,10 +6,10 @@ cache_dir="$app_dir/cache"
 cidfile="$app_dir/build.cid"
 
 # Ensure the app/cache directory exists
-mkdir -p $cache_dir
+mkdir -p "$cache_dir"
 
 # Load the files into a buildstep container
-docker run -i -v $cache_dir:/cache --cidfile="$cidfile" progrium/buildstep \
+docker run -i -v "$cache_dir:/cache" --cidfile="$cidfile" progrium/buildstep \
   /bin/bash -c "mkdir -p /app && tar -xC /app && /build/builder"
 
 # Convert the built app container to an image
