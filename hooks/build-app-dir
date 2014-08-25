@@ -9,10 +9,8 @@ cidfile="$app_dir/build.cid"
 mkdir -p "$cache_dir"
 
 # Load the files into a buildstep container
-docker run -i -v "$cache_dir:/cache" -v "$2:/src" --cidfile="$cidfile" \
-  progrium/buildstep /bin/bash -c "cp -R /src /app
-
-$("$PLUSHU_ROOT/lib/plushook" build-app-commands "$app")
+docker run -i -v "$cache_dir:/cache" -v "$2:/app" --cidfile="$cidfile" \
+  progrium/buildstep /bin/bash -c "$("$PLUSHU_ROOT/lib/plushook" build-app-commands "$app")
 
 /build/builder"
 
