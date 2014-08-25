@@ -12,9 +12,7 @@ mkdir -p "$cache_dir"
 docker run -i -v "$cache_dir:/cache" --cidfile="$cidfile" progrium/buildstep \
   /bin/bash -c "mkdir -p /app && tar -xC /app
 
-$("$PLUSHU_ROOT/lib/plushook" build-app-commands "$app")
-
-/build/builder"
+$("$PLUSHU_ROOT/lib/plushook" build-app-commands "$app")"
 
 # Convert the built app container to an image
 build_image=$(docker commit $(<"$cidfile"))
