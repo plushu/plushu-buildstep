@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail; [[ -n "$PLUSHU_TRACE" ]] && set -x
 
-app_dir="$PLUSHU_ROOT/apps/$1"
+app_dir="$PLUSHU_APPS_DIR/$1"
 cache_dir="$app_dir/cache"
 cidfile="$app_dir/build.cid"
 
