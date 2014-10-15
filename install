@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail; [[ -n "$PLUSHU_TRACE" ]] && set -x
 
-if command -v docker >/dev/null &&
+if command -v docker >/dev/null 2>&1 &&
   id -Gn "$PLUSHU_USER" | grep -q '\bdocker\b'; then
   docker pull progrium/buildstep
 else
