@@ -5,6 +5,6 @@ app_src=$1
 app_dest=$2
 
 # Cheap way to clone the build image
-cid=$(docker run -d $(<"$$PLUSHU_APPS_DIR/$app_src/build.iid") true)
+cid=$(docker run -d $(<"$PLUSHU_APPS_DIR/$app_src/build.iid") true)
 docker commit "$cid" >"$PLUSHU_APPS_DIR/$app_dest/build.iid"
 docker rm $cid > /dev/null
